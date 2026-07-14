@@ -24,6 +24,7 @@ build:
     content:
       - if: unix
         then:
+          - export OPENSSL_DIR="$PREFIX"
           - cargo auditable install --path=. --root="$PREFIX" --no-track --locked --bins --features=tls
       - if: win
         then:
