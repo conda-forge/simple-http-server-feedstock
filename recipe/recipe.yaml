@@ -21,16 +21,13 @@ build:
       AR_x86_64_pc_windows_msvc: llvm-lib
       CC_x86_64_pc_windows_msvc: clang-cl
       CXX_x86_64_pc_windows_msvc: clang-cl
+    interpreter: nu
     content:
-      - if: unix
-        then:
-          - export OPENSSL_DIR="$PREFIX"
-          - cargo auditable install --path=. --root="$PREFIX" --no-track --locked --bins --features=tls
-      - if: win
-        then:
-          - set "OPENSSL_DIR=%LIBRARY_PREFIX%"
-          - cargo auditable install --path=. --root="%LIBRARY_PREFIX%" --no-track --locked --bins --features=tls
-      - cargo-bundle-licenses --format=yaml --output=./THIRDPARTY.yml
+      - let prefix = $env.LIBRARY_PREFIX? | default $env.PREFIX
+      # build main app and generate license data
+      - $env.OPENSSL_DIR = $prefix
+      - ^cargo auditable install --path=. --root=($prefix) --no-track --locked --bins --features=tls
+      - ^cargo-bundle-licenses --format=yaml --output=THIRDPARTY.yml
 
 requirements:
   build:
@@ -39,6 +36,7 @@ requirements:
     - ${{ compiler('rust') }}
     - cargo-auditable
     - cargo-bundle-licenses
+    - nushell
     - if: unix
       then: pkg-config
   host:
