@@ -38,7 +38,7 @@ requirements:
     - cargo-bundle-licenses
     - nushell
     - if: unix
-      then: pkg-config
+      then: pkgconf
   host:
     - openssl
 
